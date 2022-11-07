@@ -1,1 +1,3 @@
 # SpokenDigitRecognition
+
+somebody elses writing
