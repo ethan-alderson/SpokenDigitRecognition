@@ -10,4 +10,6 @@ import matplotlib.pyplot as plt
 import librosa
 
 
+audio = librosa.load("./recordings/0_george_0.wav")
+
 
