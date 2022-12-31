@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import librosa
 
 # grab my data set class
-import SpokenDigitRecognition.audiodataset as audiodataset
+import audiodataset
 
 audio = librosa.load("SpokenDigitRecognition/recordings/0_george_0.wav", sr=8000)
 waveform = audio[0]
@@ -26,5 +26,5 @@ plt.imshow(librosa.power_to_db(melspec, ref=np.max))
 dataset = audiodataset.AudioDataset()
 
 
-plt.imshow(librosa.power_to_db(dataset.__getitem(10)[0], ref=np.max))
+plt.imshow(librosa.power_to_db(dataset.__getitem__(10)[0], ref=np.max))
 plt.show()

@@ -22,8 +22,8 @@ class AudioDataset():
         for speaker in speakers:
             for digit in range(10):
                 for trial in range(50):
-                    self.files += f'{digit}_{speaker}_{trial}.wav'
-                    self.labels += digit
+                    self.files.append(f'{digit}_{speaker}_{trial}.wav')
+                    self.labels.append(digit)
 
     def __getitem__(self, index):
 
