@@ -23,7 +23,7 @@ melspec = librosa.feature.melspectrogram(y = waveform, sr=8000)
 
 plt.imshow(librosa.power_to_db(melspec, ref=np.max))
 
-dataset = audiodataset()
+dataset = audiodataset.AudioDataset()
 
 
 plt.imshow(librosa.power_to_db(dataset.__getitem(10)[0], ref=np.max))
