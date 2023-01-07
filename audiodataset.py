@@ -32,7 +32,7 @@ class AudioDataset():
 
         audio = librosa.load(filename, sr=8000)
 
-        # because audio is a tuple (waveform: array, int: sample rate), we call audio[0]
+        # audio is a tuple (waveform: array, int: sample rate), so we call audio[0]
         melspec = librosa.feature.melspectrogram(y = audio[0], sr=8000)
 
         return melspec, label
