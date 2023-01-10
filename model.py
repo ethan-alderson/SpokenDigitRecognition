@@ -12,10 +12,23 @@ import librosa
 import pandas as pd
 
 from utils import PreprocessingUtils
+from audiodataset import AudioDataset
 
+
+# IGNORE SCALING WARNINGS
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+
+# establish a utility instance with padding length 15
 u = PreprocessingUtils(15)
 
+# separate the data into training and testing
 train, test = u.split_data()
 
+train_dataset = AudioDataset("SpokenDigitRecognition/train_data.csv")
+test_dataset = AudioDataset("SpokenDigitRecognition/test_data.csv")
 
+train_loader = DataLoader(train_dataset, batch_size=5)
+test_loader = DataLoader(test_dataset, batch_size=5)
 
+len(next(iter(train_loader))[0])

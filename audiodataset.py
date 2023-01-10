@@ -2,38 +2,29 @@
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
+import pandas as pd
+
 
 import matplotlib.pyplot as plt
 
 import librosa
 
+from utils import PreprocessingUtils
+
 class AudioDataset():
 
-    def __init__(self):
+    def __init__(self, file_csv):
 
-        speakers = ['george', 'jackson', 'lucas', 'nicolas', 'theo', 'yeweler']
-
-        # all of the file names
-        self.files = []
-
-        # their corresponding labels
-        self.labels = []
-
-        for speaker in speakers:
-            for digit in range(10):
-                for trial in range(50):
-                    self.files.append(f'{digit}_{speaker}_{trial}.wav')
-                    self.labels.append(digit)
+        filenames_and_labels = pd.read_csv(file_csv)
+        self.files = filenames_and_labels["file_name"]
+        self.labels = filenames_and_labels["label"]
 
     def __getitem__(self, index):
 
-        filename = f'SpokenDigitRecognition/recordings/{self.files[index]}'
-        label = self.labels[index]
+        u = PreprocessingUtils(15)
 
-        audio = librosa.load(filename, sr=8000)
-
-        # audio is a tuple (waveform: array, int: sample rate), so we call audio[0]
-        melspec = librosa.feature.melspectrogram(y = audio[0], sr=8000)
+        label = self.labels.iloc[index]
+        melspec = u.load_audio(self.files.iloc[index])
 
         return melspec, label
 

@@ -11,7 +11,6 @@ class PreprocessingUtils:
     
 # PREPROCESSING UTILITY
 
-    @staticmethod
     def trim_and_pad(self, audio: np.array):
         """Trims or pads the audio files for each input matrix to be the same size
 
@@ -28,7 +27,6 @@ class PreprocessingUtils:
         
         return audio[:, :self.AUDIO_LENGTH]
     
-    @staticmethod
     def load_audio(self, filename):
         """ Loads audio and converts it into a spectrogram
 
@@ -39,8 +37,8 @@ class PreprocessingUtils:
         audio = librosa.load(f'SpokenDigitRecognition/recordings/{filename}', sr=8000)
         return self.trim_and_pad(librosa.feature.melspectrogram(y = audio[0], sr=8000, n_fft=16384))
 
-    @staticmethod
-    def split_data():
+
+    def split_data(self):
         # 80% for training and 20% for testing
         files = pd.read_csv("SpokenDigitRecognition/train.csv")
         train = files.iloc[:int(3000*0.8)]
