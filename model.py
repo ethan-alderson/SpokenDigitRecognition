@@ -25,8 +25,8 @@ u = PreprocessingUtils(15)
 # separate the data into training and testing
 train, test = u.split_data()
 
-train_dataset = AudioDataset("SpokenDigitRecognition/train_data.csv")
-test_dataset = AudioDataset("SpokenDigitRecognition/test_data.csv")
+train_dataset = AudioDataset("SpokenDigitRecognition/Data/train_data.csv")
+test_dataset = AudioDataset("SpokenDigitRecognition/Data/test_data.csv")
 
 train_loader = DataLoader(train_dataset, batch_size=5)
 test_loader = DataLoader(test_dataset, batch_size=5)

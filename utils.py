@@ -34,16 +34,16 @@ class PreprocessingUtils:
             filename (str): The name of the file
         """
 
-        audio = librosa.load(f'SpokenDigitRecognition/recordings/{filename}', sr=8000)
+        audio = librosa.load(f'SpokenDigitRecognition/Recordings/{filename}', sr=8000)
         return self.trim_and_pad(librosa.feature.melspectrogram(y = audio[0], sr=8000, n_fft=16384))
 
 
     def split_data(self):
         # 80% for training and 20% for testing
-        files = pd.read_csv("SpokenDigitRecognition/train.csv")
+        files = pd.read_csv("SpokenDigitRecognition/Data/train.csv")
         train = files.iloc[:int(3000*0.8)]
         test  = files.iloc[int(3000*0.8):]
-        train.to_csv('SpokenDigitRecognition/train_data.csv')
-        test.to_csv('SpokenDigitRecognition/test_data.csv')
+        train.to_csv('SpokenDigitRecognition/Data/train_data.csv')
+        test.to_csv('SpokenDigitRecognition/Data/test_data.csv')
 
         return train, test
