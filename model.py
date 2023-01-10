@@ -31,4 +31,5 @@ test_dataset = AudioDataset("SpokenDigitRecognition/test_data.csv")
 train_loader = DataLoader(train_dataset, batch_size=5)
 test_loader = DataLoader(test_dataset, batch_size=5)
 
-len(next(iter(train_loader))[0])
+# print the length of a single batch (5)
+print(len(next(iter(train_loader))[0]))
