@@ -11,6 +11,11 @@ import librosa
 
 import pandas as pd
 
-from utilities.preprocessingutils import PreprocessingUtils as ppu
+from utils import PreprocessingUtils
+
+u = PreprocessingUtils(15)
+
+train, test = u.split_data()
+
 
 
