@@ -9,7 +9,7 @@ from audiodataset import AudioDataset
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
-# establish a utility instance with padding length 15
+# establish a utility object with standardization length 15
 u = PreprocessingUtils(15)
 
 # separate the data into training and testing
@@ -105,3 +105,60 @@ class AudioClassifier(nn.Module):
 model = AudioClassifier()
 model.to(device)
 print(model)
+
+# multiple different labels that could be picked for one sample
+cost = torch.nn.CrossEntropyLoss()
+
+# How fast the model learns, if learning_rate is too large the local minima will be overshot during gradient descent
+learning_rate = 0.005
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+
+# takes in the dataloader, the model, the cost function, and the optimizer object
+def train(dataloader, model, loss, optimizer):
+    model.train()
+    # length of the data in the data set
+    size = len(dataloader.dataset)
+
+    # X: audio, Y: label
+    for batch, (X, Y) in enumerate(dataloader):
+        X = X.view(-1,1,128,15).float()
+        X, Y = X.to(device), Y.to(device)
+
+        optimizer.zero_grad()
+        # prediction for the particular audio file
+        pred = model(X)
+
+        # Loss/Error
+        loss = cost(pred, Y)
+
+        # backpropagation
+        loss.backward()
+
+        optimizer.step()
+
+        # PROGRESS MESSAGE
+        if batch % 100 == 0:
+            loss, current = loss.item(), batch * len(X)
+            print(f'loss: {loss:>7f}   [{current:>5d}/{size:>5d}]')
+
+def test(dataloader, model):
+    size = len(dataloader.dataset)
+    model.eval()
+    test_loss, correct = 0, 0
+
+    # keep the model static via torch.no_grad
+    with torch.no_grad():
+        for batch, (X, Y) in enumerate(dataloader):
+            X = X.view(-1, 1, 128, 15).float()
+            X, Y = X.to(device), Y.to(device)
+            pred = model(X)
+
+            test_loss += cost(pred, Y).item()
+            correct += (pred.argmax(1) == Y).type(torch.float).sum().item()
+
+        test_loss /= size
+        correct /= size
+
+        print(f'\nTest Error:\nacc: {(100 * correct):0.1f}%, avg loss: {test_loss:>8f}\n')
+
+train(train_loader, model, cost, optimizer)
