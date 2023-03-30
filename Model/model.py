@@ -38,31 +38,38 @@ class AudioClassifier(nn.Module):
     def __init__(self):
         super().__init__()
 
+        self.usedropout = True
+
         # the four convolutional layers of the network
-        # powers of two are for aesthetic reasons only
         self.conv1 = nn.Sequential(
-            # 1 in 32 features out
-            nn.Conv2d(in_channels=1, out_channels=64, kernel_size=8, stride=1, padding=2),
+            # 1 in 256 features out
+            nn.Conv2d(in_channels=1, out_channels=256, kernel_size=8, stride=1, padding=2),
             # rectify linear unit, if output is positive it produces the output, or else it produces 0,
-            # TLDR ReLU makes training easier and performance better
+            # This is our linearization function
             nn.ReLU(),
             # batch normalization keeps the mean of the layer's inputs 0 to prevent skew
             # shape of normalization should be the same as the number of output channels
-            nn.BatchNorm2d(64),
+            nn.BatchNorm2d(256),
             # Concentrates the outputs in pairs of two, takes the max of each pair, concentrating and shrinking the data
             nn.MaxPool2d(kernel_size=2)
         )
 
         # note that the # of output channels of one layer matches the # of input channels of the next 
         self.conv2 = nn.Sequential(
-            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=8, stride=1, padding=2),
+            nn.Conv2d(in_channels=256, out_channels=256, kernel_size=8, stride=1, padding=2),
             nn.ReLU(),
-            nn.BatchNorm2d(64),
+            nn.BatchNorm2d(256),
             nn.MaxPool2d(kernel_size=2)
             )
 
+        # drop out layer to reduce model overfitting
+        # ONLY USED IN TRAINING
+        if (self.usedropout):
+            self.dropout = nn.Dropout(0.25);   
+        
+
         self.conv3 = nn.Sequential(
-            nn.Conv2d(in_channels=64, out_channels=128, kernel_size=4, stride=1, padding=2),
+            nn.Conv2d(in_channels=256, out_channels=128, kernel_size=4, stride=1, padding=2),
             nn.ReLU(),
             nn.BatchNorm2d(128),
             nn.MaxPool2d(kernel_size=2)
@@ -84,7 +91,8 @@ class AudioClassifier(nn.Module):
         self.linear4 = nn.Linear(in_features=32, out_features=10)
     
         # a probability function that outputs the highest float of the final outputs, i.e. the digit it is guessing
-        self.output = nn.Softmax(dim = 1)
+        # we comment this out because our cross entropy loss cost function does this already
+        # self.output = nn.Softmax(dim = 1)
 
     # tells the network to move forward with the data, inherited by nn.module
     def forward(self, input_data):
@@ -99,6 +107,7 @@ class AudioClassifier(nn.Module):
         x = F.relu(self.linear3(x))
         logits = self.linear4(x)
 
-        output = self.output(logits)
+        return logits
 
-        return output
+    def prepToTest(self):
+        self.usedropout = False

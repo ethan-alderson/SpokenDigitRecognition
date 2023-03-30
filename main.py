@@ -14,7 +14,7 @@ from Tools.audiodataset import AudioDataset
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
-# establish a utility object with standardization length 15
+# establish a utility object with standardization length 10
 u = PreprocessingUtils(15)
 
 # separate the data into training and testing
@@ -27,13 +27,18 @@ train_loader = DataLoader(train_dataset, batch_size=5)
 test_loader = DataLoader(test_dataset, batch_size=5)
 model = AudioClassifier().cuda()
 
-# How fast the model learns, if learning_rate is too large the local minima will be overshot during gradient descent
-learning_rate = 0.0005
+# How fast the model learns, was previously too large and overshot local minima
+learning_rate = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
 cost = torch.nn.CrossEntropyLoss()
 
-for i in range(3):
-    train_model(train_loader, model, cost, optimizer, 'cuda')
+# baseline 25 epoch training showing >90% accuracy
+for i in range(25):
+    print(i + 1)
+    train_model(train_loader, model, cost, optimizer, 'cuda') 
+    
+# disables the dropout layers
+model.prepToTest()
 
 test_model(test_loader, model, 'cuda')
